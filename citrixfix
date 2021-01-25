@@ -70,9 +70,9 @@ Finished(){
 }
 
 checkHelp $1
-#checkroot
-#checkRcvr
-#downloadCert
-#setPerms
-#relinkCerts
+checkroot
+checkRcvr
+downloadCert
+setPerms
+relinkCerts
 Finished
