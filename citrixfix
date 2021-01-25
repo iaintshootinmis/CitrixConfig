@@ -1,0 +1,79 @@
+#! /bin/bash 
+#######################################################################################################
+# Author: Justin McAfee 									      #
+# Contact: me@justinmcafee.com									      #
+# Purpose: Download certificates for Citrix Recevier, move to folder and set perms.
+# 
+# Date: 24JAN2021										      #
+# Revision: 2      										      #
+#######################################################################################################
+
+CertPath=/opt/Citrix/ICAClient/keystore/cacerts/
+Cert=entrust_g2_ca.cer
+CertURL=https://web.entrust.com/root-certificates/$Cert
+ReceiverURL=https://
+
+checkHelp(){
+    if [ "$1" == "--help" ];then
+ printf "\nUsage: `basename $0` attempts to find a running instance of Citrix Workspace and download and configure the associated SSL certificates.\n"
+ exit 0
+fi
+}
+
+checkroot(){
+if [ $(whoami) != root ]; then
+	printf "Please re-run with sudo.\n"
+	exit 
+fi
+}
+
+errorcheck(){
+if [ $? -ne 0 ];then
+	printf " An error was encountered. Closing\n"
+	exit
+fi
+return
+}
+
+checkRcvr(){
+    service ctxlogd status
+    if [ $? -ne 0 ];then
+	printf "\n Citrix Reciever not running. User must manually install Citrix for Linux from https://www.citrix.com/downloads/workspace-app/linux/workspace-app-for-linux-latest.html \n"
+	exit	
+	else 
+	    printf "\n Citrix Reciever is already installed. Checking for Certs.\n"
+	    if [ -f "$CertPath/$Cert" ];then
+		printf "\n Certificates already in place.\n If ICAs are presenting SSL errors, try running ctx_rehash in /opt/Citrix/ICAClient/util/ctx_rehash manually.\n"
+		exit
+		fi
+	fi
+}
+
+downloadCert(){
+    cd $CertPath || exit
+    wget $CertURL  
+    errorcheck
+}
+
+setPerms(){
+    chmod 644 $Cert
+    errorcheck
+}
+
+relinkCerts(){
+    /opt/Citrix/ICAClient/util/ctx_rehash
+    errorcheck
+    }
+
+Finished(){
+    printf "\n Citrix Receiver has placed $Cert in $CertPath and successfully rehashed the files.
+    ICAs with SSL errors should now work as intended.\n" 
+}
+
+checkHelp $1
+#checkroot
+#checkRcvr
+#downloadCert
+#setPerms
+#relinkCerts
+Finished
