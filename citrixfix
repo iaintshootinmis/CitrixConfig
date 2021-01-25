@@ -2,8 +2,7 @@
 #######################################################################################################
 # Author: Justin McAfee 									      #
 # Contact: me@justinmcafee.com									      #
-# Purpose: Download certificates for Citrix Recevier, move to folder and set perms.
-# 
+# Purpose: Download certificates for Citrix Recevier, move to folder and set perms.		      #
 # Date: 24JAN2021										      #
 # Revision: 2      										      #
 #######################################################################################################
